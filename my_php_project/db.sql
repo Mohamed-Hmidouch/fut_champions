@@ -81,3 +81,77 @@ VALUES
 ( 'Morocco', 'https://cdn.sofifa.net/flags/ma.png'),
 ( 'Norway', 'https://cdn.sofifa.net/flags/no.png'),
 ('Canada', 'https://cdn.sofifa.net/flags/ca.png');
+use futchampions;
+select * from players inner join club on players.id = club.id
+inner join nationality on nationality.id = players.id;
+;
+
+alter table players
+add name_player varchar(30);
+
+INSERT INTO players (name_player,photo,position,rating,nationality_id,club_id)
+VALUES
+('messi','https://cdn.sofifa.net/players/158/023/25_120.png','RW',93,1,1),
+('Cristiano Ronaldo','https://cdn.sofifa.net/players/020/801/25_120.png','ST',99,2,2),
+('Kevin De Bruyne','https://cdn.sofifa.net/players/192/985/25_120.png','CM',87,3,3),
+('Antonio Rudiger','https://cdn.sofifa.net/players/205/452/25_120.png','CB',88,6,4),
+('Jan Oblak','https://cdn.sofifa.net/players/200/389/25_120.png','GK',86,7,8);
+
+SELECT 
+    name_player,
+    photo,
+    nationality.nationality,
+    nationality.flag,
+    club.logo,
+    club.club_name,
+    players_field.pace,
+    players_field.shooting,
+    players_field.passing,
+    players_field.dribbling,
+    players_field.defending,
+    players_field.physical,
+    gk_field.diving,
+    gk_field.handling,
+    gk_field.kicking,
+    gk_field.reflexes,
+    gk_field.speed,
+    gk_field.positioning
+FROM 
+    players 
+LEFT JOIN nationality ON players.nationality_id = nationality.id
+UNION 
+SELECT 
+    name_player,
+    photo,
+    nationality.nationality,
+    nationality.flag,
+    club.logo,
+    club.club_name,
+    players_field.pace,
+    players_field.shooting,
+    players_field.passing,
+    players_field.dribbling,
+    players_field.defending,
+    players_field.physical,
+    gk_field.diving,
+    gk_field.handling,
+    gk_field.kicking,
+    gk_field.reflexes,
+    gk_field.speed,
+    gk_field.positioning
+FROM 
+    nationality 
+LEFT JOIN players ON nationality.id = players.nationality_id
+WHERE 
+    players.id IS NULL
+INSERT INTO  players_field(pace,shooting,passing,dribbling,defending,physical,players_id)
+VALUES
+(88,86,78,99,58,90,1),
+(70,86,78,59,98,78,2),
+(78,67,70,86,87,45,3),
+(77,89,76,94,18,59,4),
+(98,78,28,97,67,98,5)
+;
+
+
+
