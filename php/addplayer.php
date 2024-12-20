@@ -29,8 +29,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             die("Connection failed: " . mysqli_connect_error());
         }
     
-        $sql_query = "INSERT INTO players (name_player, position, rating, photo,nationality_id,club_id) VALUES ('$name', '$position', '$rating', '$photo','$nationality','$club');";
-    
+        if($position === "GK"){
+            $sql_query = "
+            INSERT INTO players (name_player, position, rating, photo, nationality_id, club_id) 
+            VALUES ('$name', '$position', '$rating', '$photo', '$nationality', '$club');
+            INSERT INTO gk_field (diving, handling, kicking, reflexes, speed, positioning) 
+            VALUES ('$diving', '$handling', '$kicking', '$reflexes', '$speed', '$positioning');
+        ";
+        }else{
+            $sql_query = "
+            INSERT INTO players (name_player, position, rating, photo, nationality_id, club_id) 
+            VALUES ('$name', '$position', '$rating', '$photo', '$nationality', '$club');
+            INSERT INTO players_field (pace, shooting, passing, dribbling, defending, physical) 
+            VALUES ('$pace', '$shooting', '$passing', '$dribbling', '$defending', '$physical');
+        ";
+        }
+
+      
+
 
     $result = mysqli_multi_query($connection,$sql_query);
     header("Location:./../index.php");

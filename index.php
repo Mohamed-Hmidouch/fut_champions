@@ -34,7 +34,7 @@
                 <img src="images/logo.png" alt="">
             </div>
 
-            <span class="logo_name">CodingLab</span>
+            <span class="logo_name">FutChampions</span>
         </div>
 
         <div class="menu-items">
@@ -54,14 +54,6 @@
                 <li><a href="#">
                     <i class="uil uil-thumbs-up"></i>
                     <span class="link-name">favorits players</span>
-                </a></li>
-                <li><a href="#">
-                    <i class="uil uil-comments"></i>
-                    <span class="link-name">Comment</span>
-                </a></li>
-                <li><a href="#">
-                    <i class="uil uil-share"></i>
-                    <span class="link-name">Share</span>
                 </a></li>
             </ul>
             
@@ -125,9 +117,15 @@
                       echo "<td>".$row['club_name']."</td>";
                       echo "<td><img src='".$row['logo']."' alt='Club Logo' style='width:50px; height:50px;'></td>";
                       echo "<td>
-                       <button type='button' class='btn btn-warning'>MODIFIER</button>
-                      <button type='button' class='btn btn-danger'>SUPRIMER</button>
-                      </td>";
+                      <button type='button' class='btn btn-warning'>
+                          <a class='list-group-item list-group-item-action' href='./php/update.php?id=" . $row['id'] . "'>Modifier</a>
+                      </button>
+                      <button type='button' class='btn btn-danger'>
+                          <a class='list-group-item list-group-item-action' href='./php/delete.php?id=" . $row['id'] . "'>SUPPRIMER</a>
+                      </button>
+                  </td>";
+                  
+                  
                       echo "</tr>";
                 }
                 mysqli_close($connection);
@@ -176,11 +174,6 @@
                   <input type="url" class="form-control" id="photo" name="photo">
                   <div class="invalid-feedback">Please provide a valid URL for the photo.</div>
               </div>
-              <!-- <div class="col-md-6">
-                  <label for="nationality" class="form-label">Nationality</label>
-                  <input type="text" class="form-control" name="nationality" value="1">
-                  <div class="invalid-feedback">Please provide a nationality.</div>
-              </div> -->
               <div class="col-md-6">
                   <label for="nationality" class="form-label">Nationality</label>
                   <select class="form-control"  name="nationality">
@@ -198,11 +191,6 @@
                   <input type="url" class="form-control"  name="flag">
                   <div class="invalid-feedback">Please provide a valid URL for the flag.</div>
               </div>
-              <!-- <div class="col-md-6">
-                  <label for="club" class="form-label">Club</label>
-                  <input type="text" class="form-control" name="club">
-                  <div class="invalid-feedback">Please provide a club.</div>
-              </div> -->
               <div class="col-md-6">
                   <label for="club" class="form-label">Club</label>
                   <select class="form-control"  name="club">
@@ -288,7 +276,7 @@
   </div>
 </div>
     <!--  -->
-
+</div>
 </body>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="./frontend/script.js"></script>
