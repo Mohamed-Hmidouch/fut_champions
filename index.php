@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <?php
-    include __DIR__."/my_php_project/config/db_connection.php";
+    include_once __DIR__."/my_php_project/config/db_connection.php";
 
     $sql_rq = "SELECT players.id, name_player, position, rating, photo, nationality.nationality, nationality.flag, club.logo, club.club_name
     FROM players 

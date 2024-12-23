@@ -1,16 +1,10 @@
 <?php
-include __DIR__."/../my_php_project/config/db_connection.php";
-if(isset($_GET["id"])){
+ob_start();
+include_once __DIR__ . "/../my_php_project/config/db_connection.php";
+if (isset($_GET["id"])) {
     $id = $_GET["id"];
-    // $request = "SELECT * FROM players WHERE id = '$id'";
-//     $request = "
-//     SELECT p.*, n.nationality, n.flag, c.club_name, c.logo
-//     FROM players p
-//     INNER JOIN nationality n ON p.nationality_id = n.id
-//     INNER JOIN club c ON p.club_id = c.id
-//     WHERE p.id = '$id'
-// ";
-$request = "
+
+    $request = "
     SELECT p.*, n.nationality, n.flag, c.club_name, c.logo, gf.*, pf.*
     FROM players p
     INNER JOIN nationality n ON p.nationality_id = n.id
@@ -19,14 +13,16 @@ $request = "
     LEFT JOIN players_field pf ON p.id = pf.players_id
     WHERE p.id = '$id'
 ";
-    $result = mysqli_query($connection, $request); 
-    if(!$result){
-        die("error:".mysqli_error($connection));
+    $result = mysqli_query($connection, $request);
+    if (!$result) {
+        die("error:" . mysqli_error($connection));
     } else {
-            $row = mysqli_fetch_assoc($result);
+        $row = mysqli_fetch_assoc($result);
     }
 }
+
 ?>
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -35,9 +31,11 @@ $request = "
 
     <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.8/css/line.css">
 </head>
-<?
-ob_start();
-if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_player'])){
+<?php
+
+$club_query = "SELECT id FROM club";
+$club_result = mysqli_query($connection, $club_query);
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_player'])) {
     $id = $_POST['id'];
     $fname = $_POST['name_player'];
     $fposition = $_POST['position'];
@@ -47,98 +45,75 @@ if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_player'])){
     $fflag = $_POST['flag'];
     $flogo = $_POST['logo'];
     $fclub = $_POST['club'];
-    // $fpace = $_POST['pace'];
-    // $ffshooting = $_POST['shooting'];
-    // $fpassing = $_POST['passing'];
-    // $fdribbling = $_POST['dribbling'];
-    // $fdefending = $_POST['defending'];
-    // $fphysical = $_POST['physical'];
-    // $fdiving = $_POST['diving'];
-    // $fhandling = $_POST['handling'];
-    // $fkicking = $_POST['kicking'];
-    // $freflexes = $_POST['reflexes'];
-    // $fspeed = $_POST['speed'];
-    // $fpositioning = $_POST['positioning'];
 
 
-    $update_query = "UPDATE players SET 
-        name_player='$fname', 
-        position='$fposition', 
-        rating='$frating', 
-        photo='$fphoto', 
-        nationality_id='$fnationality', 
-        club_id='$fclub' 
+    while ($club_row = mysqli_fetch_assoc($club_result)) {
+        $fclub = $club_row['id'];
+    }
+    $update_query = "UPDATE players SET
+        name_player='$fname',
+        position='$fposition',
+        rating='$frating',
+        photo='$fphoto',
+        nationality_id='$fnationality',
+        club_id='$fclub'
         WHERE id='$id'";
-            if (mysqli_multi_query($connection, $update_query)) {
+    if (mysqli_multi_query($connection, $update_query)) {
 
-                if ($fposition === "GK") {
-                    $fdiving = $_POST['diving'];
-                    $fhandling = $_POST['handling'];
-                    $fkicking = $_POST['kicking'];
-                    $freflexes = $_POST['reflexes'];
-                    $fspeed = $_POST['speed'];
-                    $fpositioning = $_POST['positioning'];
-        
+        if ($fposition === "GK") {
+            $fdiving = $_POST['diving'];
+            $fhandling = $_POST['handling'];
+            $fkicking = $_POST['kicking'];
+            $freflexes = $_POST['reflexes'];
+            $fspeed = $_POST['speed'];
+            $fpositioning = $_POST['positioning'];
 
-                    $gk_update_query = "UPDATE gk_field SET 
-                        diving='$fdiving', 
-                        handling='$fhandling', 
-                        kicking='$fkicking', 
-                        reflexes='$freflexes', 
-                        speed='$fspeed', 
-                        positioning='$fpositioning' 
+
+            $gk_update_query = "UPDATE gk_field SET
+                        diving='$fdiving',
+                        handling='$fhandling',
+                        kicking='$fkicking',
+                        reflexes='$freflexes',
+                        speed='$fspeed',
+                        positioning='$fpositioning'
                         WHERE id='$id'";
-        
-        $result =      mysqli_query($connection, $gk_update_query);
-                } else{ 
-                    $fpace = $_POST['pace'];
-                    $fshooting = $_POST['shooting'];
-                    $fpassing = $_POST['passing'];
-                    $fdribbling = $_POST['dribbling'];
-                    $fdefending = $_POST['defending'];
-                    $fphysical = $_POST['physical'];
-        
 
-                    $field_update_query = "UPDATE players_field SET 
-                        pace='$fpace', 
-                        shooting='$fshooting', 
-                        passing='$fpassing', 
-                        dribbling='$fdribbling', 
-                        defending='$fdefending', 
-                        physical='$fphysical' 
+            $result =      mysqli_query($connection, $gk_update_query);
+        } else {
+            $fpace = $_POST['pace'];
+            $fshooting = $_POST['shooting'];
+            $fpassing = $_POST['passing'];
+            $fdribbling = $_POST['dribbling'];
+            $fdefending = $_POST['defending'];
+            $fphysical = $_POST['physical'];
+
+
+            $field_update_query = "UPDATE players_field SET
+                        pace='$fpace',
+                        shooting='$fshooting',
+                        passing='$fpassing',
+                        dribbling='$fdribbling',
+                        defending='$fdefending',
+                        physical='$fphysical'
                         WHERE id='$id'";
-        
-          $result =  mysqli_query($connection, $field_update_query);
-                }
 
-            }
-    // $update_query = "UPDATE players SET name_player='$fname', position='$fposition', rating='$frating', photo='$fphoto', nationality_id='$fnationality', club_id='$fclub'";
-
-    // if ($fposition === "GK") {
-    //     $update_query .= ",diving='$fdiving', handling='$fhandling', kicking='$fkicking', reflexes='$freflexes', speed='$fspeed', positioning='$fpositioning'";
-    // } else {
-    //     $update_query .= ", pace='$fpace', shooting='$ffshooting', passing='$fpassing', dribbling='$fdribbling', defending='$fdefending', physical='$fphysical'";
-    // }
-    // $update_query .= "where id ='$newid'";
-
-    // $result = mysqli_query($connection, $update_query); 
-    if(!$result){
-        die("error:".mysqli_error($connection));
-    }else{
-        header('location:./../index.php');
+            $result =  mysqli_query($connection, $field_update_query);
+        }
+    }
+    if (!$result) {
+        die("error:" . mysqli_error($connection));
+    } else {
+        header(header: 'location:./../index.php');
         ob_end_flush();
         exit();
- 
-   }
-
-
-
+    }
 }
 ?>
+
 <body>
-    <form id="form-player" class="needs-validation"  novalidate action="update.php?new_id=<?echo $id;?>" method="POST">
-    <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
-        <div class="row g-3">                               
+    <form id="form-player" class="needs-validation" novalidate action="update.php?new_id=<? echo $id; ?>" method="POST">
+        <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
+        <div class="row g-3">
             <div class="col-md-6">
                 <label for="name_player" class="form-label">Player Name</label>
                 <input type="text" class="form-control" name="name_player" value="<?php echo $row['name_player']; ?>">
@@ -149,12 +124,12 @@ if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_player'])){
                 <select class="form-control" id="position" name="position" onchange="toggleFields()">
 
                     <option>Select Position</option>
-                    <option value="GK"<?php echo ($row['position'] == 'GK') ? 'selected' : ''; ?>>GK</option>
-                    <option value="CB"<?php echo ($row['position'] == 'CB') ? 'selected' : ''; ?>>CB</option>
-                    <option value="MC"<?php echo ($row['position'] == 'MC') ? 'selected' : ''; ?>>MC</option>
-                    <option value="LW"<?php echo ($row['position'] == 'LW') ? 'selected' : ''; ?>>LW</option>
-                    <option value="ST"<?php echo ($row['position'] == 'ST') ? 'selected' : ''; ?>>ST</option>
-                    <option value="RW"<?php echo ($row['position'] == 'RW') ? 'selected' : ''; ?>>RW</option>
+                    <option value="GK" <?php echo ($row['position'] == 'GK') ? 'selected' : ''; ?>>GK</option>
+                    <option value="CB" <?php echo ($row['position'] == 'CB') ? 'selected' : ''; ?>>CB</option>
+                    <option value="MC" <?php echo ($row['position'] == 'MC') ? 'selected' : ''; ?>>MC</option>
+                    <option value="LW" <?php echo ($row['position'] == 'LW') ? 'selected' : ''; ?>>LW</option>
+                    <option value="ST" <?php echo ($row['position'] == 'ST') ? 'selected' : ''; ?>>ST</option>
+                    <option value="RW" <?php echo ($row['position'] == 'RW') ? 'selected' : ''; ?>>RW</option>
                 </select>
 
                 <div class="invalid-feedback">Please select a position.</div>
@@ -171,13 +146,13 @@ if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_player'])){
             </div>
             <div class="col-md-6">
                 <label for="nationality" class="form-label">Nationality</label>
-                <select class="form-control"  name="nationality">
+                <select class="form-control" name="nationality">
                     <option>Select Nationality</option>
-                    <option value="7"<?php echo ($row['nationality_id'] == 7) ? 'selected' : ''; ?>>Brazil</option>
-                    <option value="2"<?php echo ($row['nationality_id'] == 2) ? 'selected' : ''; ?>>Portugal</option>
-                    <option value="1"<?php echo ($row['nationality_id'] == 1) ? 'selected' : ''; ?>>Argentina</option>
-                    <option value="10"<?php echo ($row['nationality_id'] == 10) ? 'selected' : ''; ?>>Morocco</option>
-                    <option value="4"<?php echo ($row['nationality_id'] == 4) ? 'selected' : ''; ?>>France</option>
+                    <option value="7" <?php echo ($row['nationality_id'] == 7) ? 'selected' : ''; ?>>Brazil</option>
+                    <option value="2" <?php echo ($row['nationality_id'] == 2) ? 'selected' : ''; ?>>Portugal</option>
+                    <option value="1" <?php echo ($row['nationality_id'] == 1) ? 'selected' : ''; ?>>Argentina</option>
+                    <option value="10" <?php echo ($row['nationality_id'] == 10) ? 'selected' : ''; ?>>Morocco</option>
+                    <option value="4" <?php echo ($row['nationality_id'] == 4) ? 'selected' : ''; ?>>France</option>
                 </select>
                 <div class="invalid-feedback">Please select a Nationality.</div>
             </div>
@@ -186,20 +161,15 @@ if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_player'])){
                 <input type="url" class="form-control" name="flag" value="<?php echo $row['flag']; ?>">
                 <div class="invalid-feedback">Please provide a valid URL for the flag.</div>
             </div>
-            <!-- <div class="col-md-6">
-                <label for="club" class="form-label">Club</label>
-                <input type="text" class="form-control" name="club">
-                <div class="invalid-feedback">Please provide a club.</div>
-            </div> -->
             <div class="col-md-6">
                 <label for="club" class="form-label">Club</label>
-                <select class="form-control"  name="club">
+                <select class="form-control" name="club">
                     <option>Select Club</option>
-                    <option value="Manchester City" <?php echo ($row['club_name'] == 'Manchester City') ? 'selected' : ''; ?>>Manchester City</option>
-                    <option value="Real Madrid" <?php echo ($row['club_name'] == 'Real Madrid') ? 'selected' : ''; ?>>Real Madrid</option>
-                    <option value="Liverpool" <?php echo ($row['club_name'] == 'Liverpool') ? 'selected' : ''; ?>>Liverpool</option>
-                    <option value="Manchester United" <?php echo ($row['club_name'] == 'Manchester United') ? 'selected' : ''; ?>>Manchester United</option>
-                    <option value="Bayern Munich"<?php echo ($row['club_name'] == 'Bayern Munich') ? 'selected' : ''; ?>>Bayern Munich</option>
+                    <option value="3" <?php echo ($row['club_id'] == 3) ? 'selected' : ''; ?>>Manchester City</option>
+                    <option value="4" <?php echo ($row['club_id'] == 4) ? 'selected' : ''; ?>>Real Madrid</option>
+                    <option value="6" <?php echo ($row['club_id'] == 6) ? 'selected' : ''; ?>>Liverpool</option>
+                    <option value="10" <?php echo ($row['club_id'] == 10) ? 'selected' : ''; ?>>Manchester United</option>
+                    <option value="7" <?php echo ($row['club_id'] == 7) ? 'selected' : ''; ?>>Bayern Munich</option>
                 </select>
                 <div class="invalid-feedback">Please select a Club.</div>
             </div>
@@ -268,28 +238,28 @@ if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_player'])){
         <input type="submit" form="form-player" class="btn btn-success" name="update_player" value="Update">
     </form>
 
-  </div>
-</div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script>
+    </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function toggleFields() {
+            var position = document.getElementById('position').value;
+            var fieldStats = document.getElementById('field-stats');
+            var gkStats = document.getElementById('gk-stats');
 
-function toggleFields() {
-    var position = document.getElementById('position').value;
-    var fieldStats = document.getElementById('field-stats');
-    var gkStats = document.getElementById('gk-stats');
+            if (position === 'GK') {
+                fieldStats.style.display = 'none';
+                gkStats.style.display = 'block';
+            } else if (position !== 'Select Position') {
+                fieldStats.style.display = 'block';
+                gkStats.style.display = 'none';
+            } else {
+                fieldStats.style.display = 'none';
+                gkStats.style.display = 'none';
+            }
+        }
 
-    if (position === 'GK') {
-        fieldStats.style.display = 'none';
-        gkStats.style.display = 'block';
-    } else if (position !== 'Select Position') {
-        fieldStats.style.display = 'block';
-        gkStats.style.display = 'none';
-    } else {
-        fieldStats.style.display = 'none';
-        gkStats.style.display = 'none';
-    }
-}
-
-document.addEventListener('DOMContentLoaded', toggleFields);
-</script>
-<script src="../frontend/script.js"></script></body>
+        document.addEventListener('DOMContentLoaded', toggleFields);
+    </script>
+    <script src="../frontend/script.js"></script>
+</body>
